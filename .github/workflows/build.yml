@@ -104,6 +104,7 @@ jobs:
           set -eo pipefail
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version-foobar"]')
           if [ -z "$ver" ] || [ "null" = "$ver" ]; then
+            echo "ver must not be empty or null"
             exit 1
           fi
           echo "VERSION_NIL=$ver" >> $GITHUB_OUTPUT
@@ -115,6 +116,7 @@ jobs:
           set -eo pipefail
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}-foo:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           if [ -z "$ver" ] || [ "null" = "$ver" ]; then
+            echo "ver must not be empty or null"
             exit 1
           fi
           echo "VERSION_FAIL=$ver" >> $GITHUB_OUTPUT
