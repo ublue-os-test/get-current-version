@@ -97,6 +97,13 @@ jobs:
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION_TYP=$ver" >> $GITHUB_OUTPUT
 
+     - name: Get current version - failnull
+        id: labels-failnull
+        shell: bash
+        run: |
+          ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version-foobar"]')
+          echo "VERSION_NULL=$ver" >> $GITHUB_OUTPUT
+
       - name: Get current version - fail
         id: labels-fail
         shell: bash
@@ -104,18 +111,11 @@ jobs:
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}-foo:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION_FAIL=$ver" >> $GITHUB_OUTPUT
 
-      - name: Get current version - fail2
-        id: labels-fail2
-        shell: bash
-        run: |
-          ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version-foobar"]')
-          echo "VERSION_FAIL2=$ver" >> $GITHUB_OUTPUT
-
       - name: Echo outputs
         run: |
           echo "${{ toJSON(steps.labels-typical.outputs) }}"
+          echo "${{ toJSON(steps.labels-failnull.outputs) }}"
           echo "${{ toJSON(steps.labels-fail.outputs) }}"
-          echo "${{ toJSON(steps.labels-fail2.outputs) }}"
 
   check:
     name: Check all builds successful
