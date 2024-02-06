@@ -90,21 +90,21 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
-      - name: Get current version - typical
+      - name: Get current version-typical
         id: labels-typical
         shell: bash
         run: |
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION_TYP=$ver" >> $GITHUB_OUTPUT
 
-     - name: Get current version - failnull
-        id: labels-failnull
+      - name: Get current version-nil
+        id: labels-nil
         shell: bash
         run: |
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version-foobar"]')
-          echo "VERSION_NULL=$ver" >> $GITHUB_OUTPUT
+          echo "VERSION_NIL=$ver" >> $GITHUB_OUTPUT
 
-      - name: Get current version - fail
+      - name: Get current version-fail
         id: labels-fail
         shell: bash
         run: |
@@ -114,7 +114,7 @@ jobs:
       - name: Echo outputs
         run: |
           echo "${{ toJSON(steps.labels-typical.outputs) }}"
-          echo "${{ toJSON(steps.labels-failnull.outputs) }}"
+          echo "${{ toJSON(steps.labels-nil.outputs) }}"
           echo "${{ toJSON(steps.labels-fail.outputs) }}"
 
   check:
